@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Section {
+  id      Int      @id @default(autoincrement())
+  name    String
+  persons Person[]
+  groups  Group[]
+}
+
+model Group {
+  id        Int     @id @default(autoincrement())
+  name      String
+  sortOrder Int     @default(0)
+  sectionId Int
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  persons   Person[]
+}
+
+model Person {
+  id        Int     @id @default(autoincrement())
+  name      String
+  sortOrder Int     @default(0)
+  locked    Boolean @default(false)
+  sectionId Int
+  section   Section @relation(fields: [sectionId], references: [id])
+  groupId   Int?
+  group     Group?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  orders    Order[]
+}
+
+model Product {
+  id           Int     @id @default(autoincrement())
+  name         String
+  priceExclBtw Decimal @db.Decimal(10, 2)
+  orders       Order[]
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  personId  Int
+  productId Int
+  size      String   // S, M, L, XL
+  quantity  Int      @default(1)
+  note      String?
+  createdAt DateTime @default(now())
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+}
