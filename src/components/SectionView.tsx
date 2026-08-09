@@ -108,7 +108,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
     return (
       <div
         key={person.id}
-        className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+        className="bg-white rounded-md border border-ink-100 hover:border-gold-300 transition-colors overflow-hidden"
       >
         {/* Accordion header — always visible */}
         <div className="flex items-center gap-2 px-4 py-3">
@@ -118,16 +118,16 @@ export default function SectionView({ section, persons, products, groups }: Prop
             className="flex-1 flex items-center gap-3 min-w-0 text-left"
             aria-expanded={isOpen}
           >
-            <IconChevronDown open={isOpen} className="w-4 h-4 text-gray-400 shrink-0" />
+            <IconChevronDown open={isOpen} className="w-4 h-4 text-ink-300 shrink-0" />
             <div className="min-w-0">
-              <span className="font-semibold text-gray-900">{person.name}</span>
+              <span className="font-serif font-semibold text-ink-900">{person.name}</span>
               {!isOpen && personItems > 0 && (
-                <p className="text-xs text-gray-400 mt-0.5 truncate">
+                <p className="font-mono text-xs text-ink-400 mt-0.5 truncate">
                   {personItems} artikel{personItems !== 1 ? 'en' : ''} · {formatEuro(personTotal)}
                 </p>
               )}
               {!isOpen && personItems === 0 && (
-                <p className="text-xs text-gray-400 mt-0.5">Geen bestellingen</p>
+                <p className="font-mono text-xs text-ink-300 mt-0.5">Geen bestellingen</p>
               )}
             </div>
           </button>
@@ -136,7 +136,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
           <div className="flex items-center gap-0.5 shrink-0">
             <button
               onClick={() => setAddOrderFor({ id: person.id, name: person.name })}
-              className="p-2 rounded-xl text-brand-600 hover:bg-brand-50 transition-colors"
+              className="p-2 rounded-sm text-ink-700 hover:bg-ink-50 transition-colors"
               aria-label="Bestelling toevoegen"
               title="Bestelling toevoegen"
             >
@@ -144,7 +144,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
             </button>
             <button
               onClick={() => setEditPerson({ id: person.id, name: person.name, groupId: person.groupId })}
-              className="p-2 rounded-xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+              className="p-2 rounded-sm text-ink-300 hover:text-ink-700 hover:bg-ink-50 transition-colors"
               aria-label="Persoon bewerken"
               title="Bewerken"
             >
@@ -156,39 +156,39 @@ export default function SectionView({ section, persons, products, groups }: Prop
 
         {/* Accordion body — only visible when expanded */}
         {isOpen && (
-          <div className="border-t border-gray-100">
+          <div className="border-t border-ink-100">
             {person.orders.length === 0 ? (
               <div className="px-4 py-4 text-center">
-                <p className="text-sm text-gray-400">Nog geen bestellingen</p>
+                <p className="text-sm text-ink-400">Nog geen bestellingen</p>
                 <button
                   onClick={() => setAddOrderFor({ id: person.id, name: person.name })}
-                  className="mt-2 text-brand-600 text-sm font-medium hover:underline"
+                  className="mt-2 text-ink-700 text-sm font-medium hover:underline underline-offset-2"
                 >
                   + Bestelling toevoegen
                 </button>
               </div>
             ) : (
               <>
-                <ul className="divide-y divide-gray-50">
+                <ul className="divide-y divide-ink-50">
                   {person.orders.map((order) => (
                     <li
                       key={order.id}
                       className="px-4 py-3 flex items-start justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm text-gray-800">
+                        <p className="text-sm text-ink-800">
                           <span className="font-medium">{order.product.name}</span>
-                          <span className="text-gray-400"> · {order.size}</span>
+                          <span className="font-mono text-ink-400"> · {order.size}</span>
                           {order.quantity > 1 && (
-                            <span className="text-gray-400"> · {order.quantity}×</span>
+                            <span className="font-mono text-ink-400"> · {order.quantity}×</span>
                           )}
                         </p>
                         {order.note && (
-                          <p className="text-xs text-gray-400 italic mt-0.5">"{order.note}"</p>
+                          <p className="text-xs text-ink-400 italic mt-0.5">"{order.note}"</p>
                         )}
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
-                        <span className="text-sm font-semibold text-gray-900 tabular-nums">
+                        <span className="text-sm font-semibold text-ink-900 tabular-nums">
                           {formatEuro(inclBtw(order.product.priceExclBtw) * order.quantity)}
                         </span>
                         <button
@@ -199,7 +199,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
                               personName: person.name,
                             })
                           }
-                          className="p-1.5 rounded-lg text-gray-300 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                          className="p-1.5 rounded-sm text-ink-300 hover:text-ink-700 hover:bg-ink-50 transition-colors"
                           aria-label="Bewerken"
                         >
                           <IconEdit className="w-4 h-4" />
@@ -211,15 +211,15 @@ export default function SectionView({ section, persons, products, groups }: Prop
                 </ul>
 
                 {/* Person subtotal */}
-                <div className="px-4 py-3 flex items-center justify-between bg-gray-50/70 border-t border-gray-100">
+                <div className="px-4 py-3 flex items-center justify-between bg-paper-50 border-t border-ink-100">
                   <button
                     onClick={() => setAddOrderFor({ id: person.id, name: person.name })}
-                    className="text-sm text-brand-600 font-medium hover:underline flex items-center gap-1"
+                    className="text-sm text-ink-700 font-medium hover:underline underline-offset-2 flex items-center gap-1"
                   >
                     <IconPlus className="w-4 h-4" />
                     Bestelling toevoegen
                   </button>
-                  <span className="text-sm font-bold text-gray-800 tabular-nums">
+                  <span className="text-sm font-bold text-ink-800 tabular-nums">
                     {formatEuro(personTotal)}
                   </span>
                 </div>
@@ -236,10 +236,10 @@ export default function SectionView({ section, persons, products, groups }: Prop
       {/* Section header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg lg:text-xl font-bold text-gray-900 leading-tight">
+          <h2 className="font-serif text-xl lg:text-2xl font-semibold text-ink-900 leading-tight">
             {section.name}
           </h2>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="font-mono text-sm text-ink-500 mt-0.5">
             {persons.length} {persons.length === 1 ? 'persoon' : 'personen'}
             {totalItems > 0 && ` · ${totalItems} artikelen · ${formatEuro(sectionTotal)}`}
           </p>
@@ -261,7 +261,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
         <div className="flex justify-end">
           <button
             onClick={toggleAll}
-            className="text-xs text-brand-600 font-medium hover:underline"
+            className="font-mono text-xs text-ink-600 font-medium hover:underline underline-offset-2"
           >
             {allExpanded ? 'Alles inklappen' : 'Alles uitklappen'}
           </button>
@@ -270,7 +270,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
 
       {/* People list */}
       {persons.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="bg-white rounded-md border border-ink-100">
           <EmptyState
             message="Nog niemand in deze sectie"
             action={{ label: 'Voeg de eerste persoon toe →', onClick: () => setShowAddPerson(true) }}
@@ -285,13 +285,13 @@ export default function SectionView({ section, persons, products, groups }: Prop
           {personsByGroup.map(({ group, persons: groupPersons }) => (
             <div key={group.id} className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <h3 className="font-mono text-xs font-semibold text-ink-400 uppercase tracking-wider">
                   {group.name} · {groupPersons.length}
                 </h3>
                 <div className="flex items-center gap-0.5">
                   <button
                     onClick={() => setEditGroup({ id: group.id, name: group.name })}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                    className="p-1.5 rounded-sm text-ink-400 hover:text-ink-700 hover:bg-ink-50 transition-colors"
                     aria-label="Groep bewerken"
                     title="Groep bewerken"
                   >
@@ -301,7 +301,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
                 </div>
               </div>
               {groupPersons.length === 0 ? (
-                <p className="px-1 text-xs text-gray-300">Nog niemand in deze groep</p>
+                <p className="px-1 text-xs text-ink-300">Nog niemand in deze groep</p>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 lg:items-start">
                   {groupPersons.map(renderPersonCard)}
@@ -312,7 +312,7 @@ export default function SectionView({ section, persons, products, groups }: Prop
 
           {ungroupedPersons.length > 0 && (
             <div className="space-y-3">
-              <h3 className="px-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <h3 className="px-1 font-mono text-xs font-semibold text-ink-400 uppercase tracking-wider">
                 Overig · {ungroupedPersons.length}
               </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 lg:items-start">

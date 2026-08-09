@@ -9,16 +9,16 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm',
+  primary: 'bg-ink-800 text-white hover:bg-ink-900 active:bg-ink-950 border border-ink-800',
   secondary:
-    'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 active:bg-gray-100 shadow-sm',
-  danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
-  ghost: 'text-brand-600 hover:bg-brand-50 active:bg-brand-100',
+    'bg-white text-ink-700 border border-ink-200 hover:bg-paper-50 active:bg-paper-100',
+  danger: 'bg-crimson-600 text-white hover:bg-crimson-700 active:bg-crimson-700 border border-crimson-600',
+  ghost: 'text-ink-700 hover:bg-ink-50 active:bg-ink-100',
 }
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'px-3 py-2 text-xs rounded-lg gap-1',
-  md: 'px-4 py-3 text-sm rounded-xl gap-1.5',
+  sm: 'px-3 py-2 font-mono text-xs uppercase tracking-wide rounded-sm gap-1',
+  md: 'px-4 py-3 text-sm font-medium rounded-sm gap-1.5',
 }
 
 export default function Button({

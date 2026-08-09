@@ -34,13 +34,13 @@ export default function DeleteButton(props: Props) {
         <button
           onClick={handleDelete}
           disabled={isPending}
-          className="text-xs bg-red-600 text-white px-2 py-1 rounded-lg font-medium disabled:opacity-50"
+          className="font-mono text-xs uppercase bg-crimson-600 text-white px-2 py-1 rounded-sm font-medium disabled:opacity-50"
         >
           {isPending ? '...' : 'Verwijder'}
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="text-xs text-gray-500 px-2 py-1 rounded-lg hover:bg-gray-100"
+          className="font-mono text-xs text-ink-500 px-2 py-1 rounded-sm hover:bg-paper-100"
         >
           Nee
         </button>
@@ -51,7 +51,7 @@ export default function DeleteButton(props: Props) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+      className="p-1.5 rounded-sm text-ink-300 hover:text-crimson-600 hover:bg-crimson-600/10 transition-colors"
       aria-label="Verwijderen"
       title="Verwijderen"
     >

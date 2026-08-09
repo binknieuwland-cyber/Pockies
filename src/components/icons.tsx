@@ -141,3 +141,25 @@ export function IconPalette(props: IconProps) {
     </svg>
   )
 }
+
+/** Single laurel sprig — echoes the wreath on the VS42 crest, used as a quiet section motif */
+export function IconLaurelSprig(props: IconProps) {
+  return (
+    <svg viewBox="0 0 60 16" fill="none" {...props}>
+      <path d="M1 8h52" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      {[6, 14, 22, 30, 38, 46].map((x) => (
+        <ellipse
+          key={x}
+          cx={x}
+          cy="8"
+          rx="4.5"
+          ry="2.6"
+          transform={`rotate(-32 ${x} 8)`}
+          fill="currentColor"
+          opacity={0.85}
+        />
+      ))}
+      <circle cx="54" cy="8" r="2" fill="currentColor" />
+    </svg>
+  )
+}

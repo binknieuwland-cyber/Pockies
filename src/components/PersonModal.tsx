@@ -48,7 +48,7 @@ export default function PersonModal({ sectionId, groups = [], person, onClose }:
     <Modal title={person ? 'Persoon bewerken' : 'Persoon toevoegen'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="person-name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="person-name" className="block text-sm font-medium text-ink-700 mb-1">
             Naam
           </label>
           <input
@@ -59,19 +59,19 @@ export default function PersonModal({ sectionId, groups = [], person, onClose }:
             placeholder="Naam van de persoon"
             required
             autoFocus
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
           />
         </div>
         {groups.length > 0 && (
           <div>
-            <label htmlFor="person-group" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="person-group" className="block text-sm font-medium text-ink-700 mb-1">
               Groep
             </label>
             <select
               id="person-group"
               value={groupId}
               onChange={(e) => setGroupId(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
+              className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent bg-white"
             >
               <option value="">Geen groep</option>
               {groups.map((g) => (

@@ -27,16 +27,16 @@ export default function Modal({ title, onClose, children }: ModalProps) {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-ink-950/60"
         onClick={onClose}
       />
       {/* Panel */}
-      <div className="relative w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+      <div className="relative w-full sm:max-w-md bg-white rounded-t-md sm:rounded-md border-t-2 border-gold-500 shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-ink-100">
+          <h2 className="font-serif text-lg font-semibold text-ink-900">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 -mr-1 rounded-lg"
+            className="text-ink-300 hover:text-ink-600 p-1 -mr-1 rounded-sm"
             aria-label="Sluiten"
           >
             <IconClose className="w-6 h-6" />

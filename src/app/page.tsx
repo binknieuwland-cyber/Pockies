@@ -4,11 +4,12 @@ import { prisma } from '@/lib/prisma'
 import { inclBtw, formatEuro } from '@/lib/utils'
 import Card, { CardHeader } from '@/components/ui/Card'
 import StatCard from '@/components/ui/StatCard'
+import FabricGauge from '@/components/ui/FabricGauge'
+import LaurelDivider from '@/components/ui/LaurelDivider'
 import {
   IconArrowRight,
   IconBox,
   IconEuro,
-  IconLayers,
   IconPalette,
   IconTrendUp,
   IconUsers,
@@ -72,10 +73,6 @@ export default async function OverviewPage() {
     const m = STOF_METERS[o.product.name] ?? 0
     return s + m * o.quantity
   }, 0)
-  const stofPct = Math.min((totalStof / STOF_DOEL) * 100, 100)
-  const stofRest = Math.max(STOF_DOEL - totalStof, 0)
-  const doelBehaald = totalStof >= STOF_DOEL
-
   // Stof per product
   const stofPerProduct = products.map((p) => {
     const m = STOF_METERS[p.name] ?? 0
@@ -125,8 +122,9 @@ export default async function OverviewPage() {
     <div className="space-y-6 lg:space-y-8">
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8 px-6 py-8 lg:px-12 lg:py-12">
+      <section className="bg-ink-900 rounded-md overflow-hidden relative">
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:16px_16px]" />
+        <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-8 px-6 py-8 lg:px-12 lg:py-12">
           <Image
             src="/logo.png"
             alt="VS42 logo"
@@ -136,16 +134,19 @@ export default async function OverviewPage() {
             className="h-28 w-28 sm:h-32 sm:w-32 lg:h-44 lg:w-44 object-contain shrink-0"
           />
           <div className="text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold-400">
               VS42 · Sinds 1962
             </p>
-            <h1 className="mt-1 text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">
+            <h1 className="mt-2 font-serif text-3xl lg:text-5xl font-semibold text-white leading-tight">
               De Voorstraat Shop
             </h1>
-            <p className="mt-2 text-sm lg:text-base text-gray-500 max-w-md">
-              Bestellingentracker voor ondergoed — volg de voortgang, bestellingen en kosten per
-              huisgenoot.
+            <p className="mt-3 text-sm lg:text-base text-ink-200 max-w-md">
+              Welkom bij de VS42 Shop. Plaats hier je samplebestelling of wijzig een bestaande
+              bestelling.
             </p>
+            <div className="mt-4 flex justify-center sm:justify-start">
+              <LaurelDivider />
+            </div>
           </div>
         </div>
       </section>
@@ -153,15 +154,15 @@ export default async function OverviewPage() {
       {/* ── ONTWERP LINK ─────────────────────────────────────────────────── */}
       <Link
         href="/design"
-        className="group flex items-center justify-between gap-3 bg-white border border-gray-100 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md hover:border-brand-200 transition"
+        className="group flex items-center justify-between gap-3 bg-white border border-ink-100 rounded-md px-5 py-4 hover:border-gold-400 transition-colors"
       >
         <span className="flex items-center gap-3">
-          <span className="grid place-items-center w-9 h-9 rounded-xl bg-brand-50 text-brand-600 shrink-0">
+          <span className="grid place-items-center w-9 h-9 rounded-sm bg-ink-50 text-ink-700 shrink-0">
             <IconPalette className="w-5 h-5" />
           </span>
-          <span className="text-sm font-medium text-gray-900">Bekijk het ontwerp</span>
+          <span className="text-sm font-medium text-ink-900">Bekijk het ontwerp</span>
         </span>
-        <IconArrowRight className="w-4 h-4 text-gray-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition" />
+        <IconArrowRight className="w-4 h-4 text-ink-300 group-hover:text-gold-600 group-hover:translate-x-0.5 transition" />
       </Link>
 
       {/* ── STATISTIEKEN ─────────────────────────────────────────────────── */}
@@ -189,74 +190,33 @@ export default async function OverviewPage() {
 
       {/* ── STOF VOORTGANG ──────────────────────────────────────────────── */}
       <Card className="overflow-hidden">
-        <div className="px-4 lg:px-6 pt-4 lg:pt-6 pb-2">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <span className="hidden sm:grid place-items-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600 shrink-0">
-                <IconLayers className="w-5 h-5" />
-              </span>
-              <div>
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  Stof besteld
-                </p>
-                <p className="text-4xl font-bold text-gray-900 leading-none tabular-nums">
-                  {formatM(totalStof)}
-                </p>
-                <p className="text-sm text-gray-400 mt-1">van {STOF_DOEL} m doel</p>
-              </div>
-            </div>
-            <div className="text-right shrink-0">
-              <p
-                className={`text-3xl font-bold tabular-nums ${
-                  doelBehaald ? 'text-green-600' : 'text-brand-600'
-                }`}
-              >
-                {Math.round(stofPct)}%
-              </p>
-              {doelBehaald ? (
-                <p className="text-xs text-green-600 font-medium mt-0.5">Doel behaald</p>
-              ) : (
-                <p className="text-xs text-gray-400 mt-0.5">nog {formatM(stofRest)}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-4 mb-1 h-3 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                doelBehaald ? 'bg-green-600' : 'bg-brand-600'
-              }`}
-              style={{ width: `${stofPct}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-gray-400 mb-3">
-            <span>0 m</span>
-            <span>50 m</span>
-            <span>100 m</span>
-          </div>
+        <div className="px-4 lg:px-6 pt-5 lg:pt-6 pb-4">
+          <p className="font-mono text-xs uppercase tracking-wider text-ink-400 mb-3">
+            Stof besteld · doel {STOF_DOEL} m
+          </p>
+          <FabricGauge valueM={totalStof} goalM={STOF_DOEL} />
         </div>
 
         {/* Stof per product */}
-        <div className="border-t border-gray-100">
+        <div className="border-t border-ink-100">
           <CardHeader>Stof per product</CardHeader>
-          <ul className="divide-y divide-gray-50 pb-1 lg:grid lg:grid-cols-2 lg:divide-y-0 lg:pb-2">
+          <ul className="divide-y divide-ink-50 pb-1 lg:grid lg:grid-cols-2 lg:divide-y-0 lg:pb-2">
             {stofPerProduct.map((p) => {
               const barPct = totalStof > 0 ? (p.totaalMeters / totalStof) * 100 : 0
               return (
                 <li key={p.name} className="px-4 lg:px-6 py-2.5 lg:py-3">
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-ink-700 font-medium">
                       {KORTE_NAAM[p.name] ?? p.name}
                     </span>
-                    <span className="text-gray-400">
+                    <span className="font-mono text-ink-400">
                       {p.qty}× · {p.metersPerStuk} m/stuk ={' '}
-                      <span className="text-gray-700 font-semibold">{formatM(p.totaalMeters)}</span>
+                      <span className="text-ink-700 font-semibold">{formatM(p.totaalMeters)}</span>
                     </span>
                   </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-paper-100 overflow-hidden">
                     <div
-                      className="h-full bg-brand-400 rounded-full"
+                      className="h-full bg-ink-400"
                       style={{ width: `${barPct}%` }}
                     />
                   </div>
@@ -271,41 +231,41 @@ export default async function OverviewPage() {
       <Card className="overflow-hidden">
         <CardHeader>Aantallen per product & maat</CardHeader>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs lg:text-sm">
+          <table className="w-full text-xs lg:text-sm font-mono">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-4 lg:px-6 py-2.5 lg:py-3 font-semibold text-gray-500 w-32">
+              <tr className="border-b border-ink-100">
+                <th className="text-left px-4 lg:px-6 py-2.5 lg:py-3 font-medium text-ink-400 uppercase tracking-wide w-32">
                   Product
                 </th>
                 {SIZES.map((s) => (
-                  <th key={s} className="px-3 py-2.5 lg:py-3 font-semibold text-gray-500 text-center w-10">
+                  <th key={s} className="px-3 py-2.5 lg:py-3 font-medium text-ink-400 uppercase text-center w-10">
                     {s}
                   </th>
                 ))}
-                <th className="px-3 lg:px-6 py-2.5 lg:py-3 font-semibold text-gray-700 text-center w-12 border-l border-gray-100">
+                <th className="px-3 lg:px-6 py-2.5 lg:py-3 font-medium text-ink-700 uppercase text-center w-12 border-l border-ink-100">
                   Tot.
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-ink-50">
               {matrix.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50/50">
-                  <td className="px-4 lg:px-6 py-2.5 lg:py-3 text-gray-700 font-medium whitespace-nowrap">
+                <tr key={row.id} className="hover:bg-paper-50">
+                  <td className="px-4 lg:px-6 py-2.5 lg:py-3 text-ink-700 font-medium whitespace-nowrap font-sans">
                     {KORTE_NAAM[row.name] ?? row.name}
                   </td>
                   {row.perSize.map((qty, si) => (
                     <td
                       key={si}
                       className={`px-3 py-2.5 lg:py-3 text-center font-medium tabular-nums ${
-                        qty > 0 ? 'text-gray-900' : 'text-gray-300'
+                        qty > 0 ? 'text-ink-900' : 'text-ink-200'
                       }`}
                     >
                       {qty > 0 ? qty : '—'}
                     </td>
                   ))}
                   <td
-                    className={`px-3 lg:px-6 py-2.5 lg:py-3 text-center font-bold tabular-nums border-l border-gray-100 ${
-                      row.total > 0 ? 'text-brand-700' : 'text-gray-300'
+                    className={`px-3 lg:px-6 py-2.5 lg:py-3 text-center font-semibold tabular-nums border-l border-ink-100 ${
+                      row.total > 0 ? 'text-gold-700' : 'text-ink-200'
                     }`}
                   >
                     {row.total > 0 ? row.total : '—'}
@@ -314,19 +274,19 @@ export default async function OverviewPage() {
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-gray-200 bg-gray-50">
-                <td className="px-4 lg:px-6 py-2.5 lg:py-3 font-bold text-gray-700">Totaal</td>
+              <tr className="border-t-2 border-ink-200 bg-paper-50">
+                <td className="px-4 lg:px-6 py-2.5 lg:py-3 font-semibold text-ink-700 uppercase tracking-wide">Totaal</td>
                 {colTotals.map((qty, si) => (
                   <td
                     key={si}
-                    className={`px-3 py-2.5 lg:py-3 text-center font-bold tabular-nums ${
-                      qty > 0 ? 'text-gray-900' : 'text-gray-300'
+                    className={`px-3 py-2.5 lg:py-3 text-center font-semibold tabular-nums ${
+                      qty > 0 ? 'text-ink-900' : 'text-ink-200'
                     }`}
                   >
                     {qty > 0 ? qty : '—'}
                   </td>
                 ))}
-                <td className="px-3 lg:px-6 py-2.5 lg:py-3 text-center font-bold tabular-nums text-brand-700 border-l border-gray-200">
+                <td className="px-3 lg:px-6 py-2.5 lg:py-3 text-center font-semibold tabular-nums text-gold-700 border-l border-ink-200">
                   {grandQtyTotal > 0 ? grandQtyTotal : '—'}
                 </td>
               </tr>
@@ -340,24 +300,24 @@ export default async function OverviewPage() {
         <Card className="overflow-hidden">
           <CardHeader>Per sectie</CardHeader>
           {bySection.every((s) => s.qty === 0) ? (
-            <p className="px-4 py-6 text-gray-400 text-sm text-center">Nog geen bestellingen</p>
+            <p className="px-4 py-6 text-ink-400 text-sm text-center">Nog geen bestellingen</p>
           ) : (
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-ink-100">
               {bySection.map((sec) => (
                 <li key={sec.id} className="flex items-center justify-between px-4 lg:px-6 py-3 gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{sec.name}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-sm font-medium text-ink-900 truncate">{sec.name}</p>
+                    <p className="font-mono text-xs text-ink-400 mt-0.5">
                       {sec.personCount} {sec.personCount === 1 ? 'persoon' : 'personen'}
                       {sec.qty > 0 && ` · ${sec.qty} artikel${sec.qty !== 1 ? 'en' : ''}`}
                     </p>
                   </div>
                   {sec.qty > 0 ? (
-                    <span className="text-sm font-semibold text-gray-900 whitespace-nowrap tabular-nums">
+                    <span className="text-sm font-semibold text-ink-900 whitespace-nowrap tabular-nums">
                       {formatEuro(sec.cost)}
                     </span>
                   ) : (
-                    <span className="text-xs text-gray-300">—</span>
+                    <span className="text-xs text-ink-200">—</span>
                   )}
                 </li>
               ))}
@@ -367,23 +327,23 @@ export default async function OverviewPage() {
 
         <Card className="overflow-hidden">
           <CardHeader>Kosten per product</CardHeader>
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-ink-100">
             {byProduct.map((p) => (
               <li key={p.name} className="px-4 lg:px-6 py-3">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm text-gray-800 truncate pr-2">
+                  <span className="text-sm text-ink-800 truncate pr-2">
                     {KORTE_NAAM[p.name] ?? p.name}
                   </span>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-xs font-medium text-gray-400">{p.qty}×</span>
-                    <span className="text-sm font-semibold text-gray-900 w-20 text-right tabular-nums">
+                    <span className="font-mono text-xs font-medium text-ink-400">{p.qty}×</span>
+                    <span className="text-sm font-semibold text-ink-900 w-20 text-right tabular-nums">
                       {p.qty > 0 ? formatEuro(p.cost) : '—'}
                     </span>
                   </div>
                 </div>
-                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-paper-100 overflow-hidden">
                   <div
-                    className="h-full bg-brand-500 rounded-full"
+                    className="h-full bg-gold-500"
                     style={{ width: `${(p.qty / maxProductQty) * 100}%` }}
                   />
                 </div>

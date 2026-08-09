@@ -69,14 +69,14 @@ export default function OrderModal({ personId, personName, products, order, onCl
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Product */}
         <div>
-          <label htmlFor="order-product" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="order-product" className="block text-sm font-medium text-ink-700 mb-1">
             Product
           </label>
           <select
             id="order-product"
             value={productId}
             onChange={(e) => setProductId(Number(e.target.value))}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 bg-white"
           >
             {products.map((p) => (
               <option key={p.id} value={p.id}>
@@ -88,17 +88,17 @@ export default function OrderModal({ personId, personName, products, order, onCl
 
         {/* Size */}
         <div>
-          <p className="block text-sm font-medium text-gray-700 mb-2">Maat</p>
+          <p className="block text-sm font-medium text-ink-700 mb-2">Maat</p>
           <div className="grid grid-cols-4 gap-2">
             {SIZES.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => setSize(s)}
-                className={`py-3 rounded-lg text-sm font-medium border-2 transition-colors ${
+                className={`py-3 rounded-sm font-mono text-sm font-medium border-2 transition-colors ${
                   size === s
-                    ? 'border-brand-600 bg-brand-50 text-brand-700'
-                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                    ? 'border-ink-700 bg-ink-50 text-ink-800'
+                    : 'border-ink-200 text-ink-700 hover:border-ink-300'
                 }`}
               >
                 {s}
@@ -109,14 +109,14 @@ export default function OrderModal({ personId, personName, products, order, onCl
 
         {/* Quantity */}
         <div>
-          <label htmlFor="order-qty" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="order-qty" className="block text-sm font-medium text-ink-700 mb-1">
             Aantal
           </label>
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-11 h-11 rounded-lg border border-gray-300 text-xl font-medium text-gray-700 hover:bg-gray-50 flex items-center justify-center"
+              className="w-11 h-11 rounded-sm border border-ink-200 text-xl font-medium text-ink-700 hover:bg-paper-50 flex items-center justify-center"
             >
               −
             </button>
@@ -127,12 +127,12 @@ export default function OrderModal({ personId, personName, products, order, onCl
               max={99}
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-              className="w-16 text-center rounded-lg border border-gray-300 px-2 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-16 text-center rounded-sm border border-ink-200 px-2 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500"
             />
             <button
               type="button"
               onClick={() => setQuantity(quantity + 1)}
-              className="w-11 h-11 rounded-lg border border-gray-300 text-xl font-medium text-gray-700 hover:bg-gray-50 flex items-center justify-center"
+              className="w-11 h-11 rounded-sm border border-ink-200 text-xl font-medium text-ink-700 hover:bg-paper-50 flex items-center justify-center"
             >
               +
             </button>
@@ -141,8 +141,8 @@ export default function OrderModal({ personId, personName, products, order, onCl
 
         {/* Note */}
         <div>
-          <label htmlFor="order-note" className="block text-sm font-medium text-gray-700 mb-1">
-            Opmerking <span className="text-gray-400">(optioneel)</span>
+          <label htmlFor="order-note" className="block text-sm font-medium text-ink-700 mb-1">
+            Opmerking <span className="text-ink-400">(optioneel)</span>
           </label>
           <input
             id="order-note"
@@ -150,14 +150,14 @@ export default function OrderModal({ personId, personName, products, order, onCl
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Bijv. cadeau, kleur voorkeur…"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
           />
         </div>
 
         {/* Price preview */}
-        <div className="bg-brand-50 rounded-lg px-4 py-3 flex items-center justify-between">
-          <span className="text-sm text-brand-700">Totaal incl. BTW</span>
-          <span className="text-lg font-bold text-brand-800">{formatEuro(lineTotal)}</span>
+        <div className="bg-gold-50 rounded-sm px-4 py-3 flex items-center justify-between border border-gold-200">
+          <span className="text-sm text-gold-800">Totaal incl. BTW</span>
+          <span className="font-display text-xl text-gold-900">{formatEuro(lineTotal)}</span>
         </div>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}

@@ -41,7 +41,7 @@ export default function GroupModal({ sectionId, group, onClose }: Props) {
     <Modal title={group ? 'Groep bewerken' : 'Groep toevoegen'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="group-name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="group-name" className="block text-sm font-medium text-ink-700 mb-1">
             Groepsnaam
           </label>
           <input
@@ -52,7 +52,7 @@ export default function GroupModal({ sectionId, group, onClose }: Props) {
             placeholder="Bijv. Atari"
             required
             autoFocus
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
           />
         </div>
         {error && <p className="text-red-600 text-sm">{error}</p>}

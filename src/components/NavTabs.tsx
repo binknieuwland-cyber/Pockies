@@ -25,10 +25,10 @@ export default function NavTabs({ sections }: { sections: Section[] }) {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`px-3 lg:px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors rounded-t-lg ${
+              className={`px-3 lg:px-4 py-2.5 font-mono text-xs tracking-wider uppercase whitespace-nowrap border-b-2 transition-colors ${
                 active
-                  ? 'border-white text-white'
-                  : 'border-transparent text-brand-200 hover:text-white hover:border-brand-300'
+                  ? 'border-gold-500 text-white'
+                  : 'border-transparent text-ink-300 hover:text-white hover:border-ink-500'
               }`}
             >
               {tab.label}
