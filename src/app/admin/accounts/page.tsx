@@ -14,7 +14,6 @@ export default async function AccountsPage() {
     where: { name: 'Huisgenoten' },
     include: {
       persons: {
-        where: { locked: true },
         orderBy: { sortOrder: 'asc' },
         include: { user: true },
       },
