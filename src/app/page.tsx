@@ -1,7 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/auth'
+import LandingPage from '@/components/LandingPage'
 import { inclBtw, formatEuro } from '@/lib/utils'
+import { STOF_METERS, STOF_DOEL, computeTotalStof } from '@/lib/fabric'
 import Card, { CardHeader } from '@/components/ui/Card'
 import StatCard from '@/components/ui/StatCard'
 import FabricGauge from '@/components/ui/FabricGauge'
@@ -16,16 +20,6 @@ import {
 } from '@/components/icons'
 
 export const dynamic = 'force-dynamic'
-
-// Stof per product in meters
-const STOF_METERS: Record<string, number> = {
-  'Pockies': 1,
-  'Boyfriendboxers (vrouwen pockies)': 1,
-  'Pyjamabroek': 2.86,
-  'Pyjamashirt': 2.86,
-  'Djellaba': 3.34,
-}
-const STOF_DOEL = 100 // meter
 
 // Verkorte namen voor in de tabel
 const KORTE_NAAM: Record<string, string> = {
@@ -43,6 +37,13 @@ function formatM(m: number) {
 }
 
 export default async function OverviewPage() {
+  const session = await getSession()
+  if (!session) {
+    const orders = await prisma.order.findMany({ include: { product: true } })
+    return <LandingPage stofMeters={computeTotalStof(orders)} stofDoel={STOF_DOEL} />
+  }
+  if (session.role !== 'COMM_POCKIES') redirect(`/sections/${session.huisgenotenSectionId}`)
+
   const [orders, products, sections] = await Promise.all([
     prisma.order.findMany({
       include: {
@@ -69,10 +70,7 @@ export default async function OverviewPage() {
   const avgPerPerson = peopleWithOrders > 0 ? grandTotal / peopleWithOrders : 0
 
   // ── Stof ────────────────────────────────────────────────────────────────
-  const totalStof = orders.reduce((s, o) => {
-    const m = STOF_METERS[o.product.name] ?? 0
-    return s + m * o.quantity
-  }, 0)
+  const totalStof = computeTotalStof(orders)
   // Stof per product
   const stofPerProduct = products.map((p) => {
     const m = STOF_METERS[p.name] ?? 0

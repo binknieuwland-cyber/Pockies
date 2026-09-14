@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import type { PaymentStatus } from '@prisma/client'
 import { formatEuro, inclBtw } from '@/lib/utils'
 import PersonModal from './PersonModal'
 import OrderModal from './OrderModal'
 import GroupModal from './GroupModal'
 import DeleteButton from './DeleteButton'
+import PaymentStatusButtons from './PaymentStatusButtons'
 import Button from './ui/Button'
 import EmptyState from './ui/EmptyState'
 import { IconChevronDown, IconEdit, IconPlus } from './icons'
@@ -31,6 +33,8 @@ interface PersonData {
   locked: boolean
   groupId: number | null
   orders: OrderData[]
+  phone: string | null
+  paymentStatus: PaymentStatus
 }
 
 interface GroupData {
@@ -44,9 +48,16 @@ interface Props {
   persons: PersonData[]
   products: Product[]
   groups: GroupData[]
+  canManagePayments: boolean
 }
 
-export default function SectionView({ section, persons, products, groups }: Props) {
+export default function SectionView({
+  section,
+  persons,
+  products,
+  groups,
+  canManagePayments,
+}: Props) {
   // Accordion: track which persons are expanded
   const [expanded, setExpanded] = useState<Set<number>>(new Set())
 
@@ -87,6 +98,14 @@ export default function SectionView({ section, persons, products, groups }: Prop
   )
   const totalItems = persons.reduce(
     (s, p) => s + p.orders.reduce((ps, o) => ps + o.quantity, 0),
+    0,
+  )
+
+  // Wat nog niet betaald is (alleen relevant voor personen met een telefoonnummer,
+  // d.w.z. binnengekomen via het publieke bestelformulier)
+  const outstandingPersons = persons.filter((p) => p.phone && p.paymentStatus !== 'BETAALD')
+  const outstandingTotal = outstandingPersons.reduce(
+    (s, p) => s + p.orders.reduce((ps, o) => ps + inclBtw(o.product.priceExclBtw) * o.quantity, 0),
     0,
   )
 
@@ -153,6 +172,24 @@ export default function SectionView({ section, persons, products, groups }: Prop
             {!person.locked && <DeleteButton kind="person" id={person.id} />}
           </div>
         </div>
+
+        {/* Tikkie-status — alleen bij personen met een telefoonnummer (publieke bestellingen) */}
+        {person.phone && (
+          <div className="flex items-center justify-between gap-2 px-4 pb-3 -mt-1">
+            <span className="font-mono text-xs text-ink-400 truncate">{person.phone}</span>
+            {canManagePayments ? (
+              <PaymentStatusButtons personId={person.id} status={person.paymentStatus} />
+            ) : (
+              <span className="font-mono text-[10px] uppercase tracking-wide text-ink-400">
+                {person.paymentStatus === 'BETAALD'
+                  ? 'Betaald'
+                  : person.paymentStatus === 'TIKKIE_GESTUURD'
+                    ? 'Tikkie gestuurd'
+                    : 'Nog niet gestuurd'}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Accordion body — only visible when expanded */}
         {isOpen && (
@@ -243,6 +280,12 @@ export default function SectionView({ section, persons, products, groups }: Prop
             {persons.length} {persons.length === 1 ? 'persoon' : 'personen'}
             {totalItems > 0 && ` · ${totalItems} artikelen · ${formatEuro(sectionTotal)}`}
           </p>
+          {canManagePayments && outstandingPersons.length > 0 && (
+            <p className="font-mono text-sm text-gold-700 mt-1">
+              {formatEuro(outstandingTotal)} nog te ontvangen van {outstandingPersons.length}{' '}
+              {outstandingPersons.length === 1 ? 'persoon' : 'personen'}
+            </p>
+          )}
         </div>
         <div className="flex gap-2 shrink-0">
           <Button variant="secondary" onClick={() => setShowAddGroup(true)}>

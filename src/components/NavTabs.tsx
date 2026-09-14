@@ -8,12 +8,22 @@ interface Section {
   name: string
 }
 
-export default function NavTabs({ sections }: { sections: Section[] }) {
+interface Props {
+  sections: Section[]
+  role: 'COMM_POCKIES' | 'HUISGENOOT'
+  huisgenotenSectionId: number
+}
+
+export default function NavTabs({ sections, role, huisgenotenSectionId }: Props) {
   const pathname = usePathname()
 
+  const visibleSections =
+    role === 'COMM_POCKIES' ? sections : sections.filter((s) => s.id === huisgenotenSectionId)
+
   const tabs = [
-    { href: '/', label: 'Overzicht' },
-    ...sections.map((s) => ({ href: `/sections/${s.id}`, label: s.name })),
+    ...(role === 'COMM_POCKIES' ? [{ href: '/', label: 'Overzicht' }] : []),
+    ...visibleSections.map((s) => ({ href: `/sections/${s.id}`, label: s.name })),
+    ...(role === 'COMM_POCKIES' ? [{ href: '/admin/accounts', label: 'Accounts' }] : []),
   ]
 
   return (

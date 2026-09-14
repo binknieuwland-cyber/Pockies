@@ -10,6 +10,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  COMM_POCKIES
+  HUISGENOOT
+}
+
+enum PaymentStatus {
+  NOG_NIET_GESTUURD
+  TIKKIE_GESTUURD
+  BETAALD
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  codeHash  String
+  role      Role
+  personId  Int?     @unique
+  person    Person?  @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now())
+}
+
 model Section {
   id      Int      @id @default(autoincrement())
   name    String
@@ -27,15 +48,18 @@ model Group {
 }
 
 model Person {
-  id        Int     @id @default(autoincrement())
-  name      String
-  sortOrder Int     @default(0)
-  locked    Boolean @default(false)
-  sectionId Int
-  section   Section @relation(fields: [sectionId], references: [id])
-  groupId   Int?
-  group     Group?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
-  orders    Order[]
+  id            Int           @id @default(autoincrement())
+  name          String
+  sortOrder     Int           @default(0)
+  locked        Boolean       @default(false)
+  sectionId     Int
+  section       Section       @relation(fields: [sectionId], references: [id])
+  groupId       Int?
+  group         Group?        @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  orders        Order[]
+  user          User?
+  phone         String?
+  paymentStatus PaymentStatus @default(NOG_NIET_GESTUURD)
 }
 
 model Product {
