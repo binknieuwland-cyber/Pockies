@@ -35,6 +35,8 @@ interface PersonData {
   orders: OrderData[]
   phone: string | null
   paymentStatus: PaymentStatus
+  referrerName?: string | null
+  clubName?: string | null
 }
 
 interface GroupData {
@@ -172,6 +174,24 @@ export default function SectionView({
             {!person.locked && <DeleteButton kind="person" id={person.id} />}
           </div>
         </div>
+
+        {/* Doorverwijzende huisgenoot — alleen bij bestellingen "via een huisgenoot" */}
+        {person.referrerName && (
+          <div className="px-4 pb-2 -mt-1">
+            <span className="font-mono text-[10px] uppercase tracking-wide text-ink-400">
+              via {person.referrerName}
+            </span>
+          </div>
+        )}
+
+        {/* Club — alleen tonen als dit niet al de reden is dat de lijst gegroepeerd is */}
+        {person.clubName && groups.length === 0 && (
+          <div className="px-4 pb-2 -mt-1">
+            <span className="font-mono text-[10px] uppercase tracking-wide text-ink-400">
+              club: {person.clubName}
+            </span>
+          </div>
+        )}
 
         {/* Tikkie-status — alleen bij personen met een telefoonnummer (publieke bestellingen) */}
         {person.phone && (

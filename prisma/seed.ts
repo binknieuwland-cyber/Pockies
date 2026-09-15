@@ -8,6 +8,8 @@ async function main() {
     { name: 'Huisgenoten' },
     { name: 'Oud-huisgenoten' },
     { name: 'Vrienden/clubgenoten van huisgenoten' },
+    { name: 'Huizen' },
+    { name: 'Via huisgenoten' },
   ]
 
   for (const section of sections) {
@@ -35,7 +37,7 @@ async function main() {
     })
   }
 
-  console.log('Seed voltooid: 3 secties en 5 producten aangemaakt.')
+  console.log(`Seed voltooid: ${sections.length} secties en ${products.length} producten aangemaakt.`)
 }
 
 main()

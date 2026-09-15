@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-export type PublicCategory = 'OUD_HUISGENOOT' | 'VRIEND'
+export type PublicCategory = 'OUD_HUISGENOOT' | 'CLUB' | 'HUIS' | 'VIA_HUISGENOOT'
 
 export interface PublicOrderLine {
   productId: number
@@ -16,13 +16,20 @@ export interface PublicOrderInput {
   name: string
   phone: string
   category: PublicCategory
+  /** CLUB: bestaande club-groep. HUIS: bestaand huis (indien niet nieuwHuisNaam). */
   groupId: number | null
+  /** HUIS: naam voor een nieuw aan te maken huis. */
+  newHuisNaam: string | null
+  /** VIA_HUISGENOOT: id van de huisgenoot via wie besteld wordt. */
+  referredById: number | null
   lines: PublicOrderLine[]
 }
 
 const SECTION_NAMES: Record<PublicCategory, string> = {
   OUD_HUISGENOOT: 'Oud-huisgenoten',
-  VRIEND: 'Vrienden/clubgenoten van huisgenoten',
+  CLUB: 'Vrienden/clubgenoten van huisgenoten',
+  HUIS: 'Huizen',
+  VIA_HUISGENOOT: 'Via huisgenoten',
 }
 
 export async function submitPublicOrder(input: PublicOrderInput) {
@@ -31,7 +38,7 @@ export async function submitPublicOrder(input: PublicOrderInput) {
 
   if (!name) throw new Error('Naam is verplicht')
   if (!phone) throw new Error('Telefoonnummer is verplicht')
-  if (input.category !== 'OUD_HUISGENOOT' && input.category !== 'VRIEND') {
+  if (!SECTION_NAMES[input.category]) {
     throw new Error('Kies een geldige categorie')
   }
   if (input.lines.length === 0) {
@@ -49,12 +56,45 @@ export async function submitPublicOrder(input: PublicOrderInput) {
   if (!section) throw new Error('Configuratiefout: sectie niet gevonden')
 
   let groupId: number | null = null
-  if (input.category === 'VRIEND' && input.groupId !== null) {
+  let referredById: number | null = null
+
+  if (input.category === 'CLUB' && input.groupId !== null) {
     const group = await prisma.group.findFirst({
       where: { id: input.groupId, sectionId: section.id },
     })
-    if (!group) throw new Error('Ongeldige groep')
+    if (!group) throw new Error('Ongeldige club')
     groupId = group.id
+  }
+
+  if (input.category === 'HUIS') {
+    const newHuisNaam = input.newHuisNaam?.trim()
+    if (newHuisNaam) {
+      const last = await prisma.group.findFirst({
+        where: { sectionId: section.id },
+        orderBy: { sortOrder: 'desc' },
+      })
+      const created = await prisma.group.create({
+        data: { name: newHuisNaam, sectionId: section.id, sortOrder: (last?.sortOrder ?? -1) + 1 },
+      })
+      groupId = created.id
+    } else {
+      if (input.groupId === null) throw new Error('Kies een huis of vul een nieuwe naam in')
+      const group = await prisma.group.findFirst({
+        where: { id: input.groupId, sectionId: section.id },
+      })
+      if (!group) throw new Error('Ongeldig huis')
+      groupId = group.id
+    }
+  }
+
+  if (input.category === 'VIA_HUISGENOOT') {
+    if (input.referredById === null) throw new Error('Kies via welke huisgenoot je bestelt')
+    const huisgenotenSection = await prisma.section.findFirst({ where: { name: 'Huisgenoten' } })
+    const referrer = await prisma.person.findFirst({
+      where: { id: input.referredById, sectionId: huisgenotenSection?.id },
+    })
+    if (!referrer) throw new Error('Ongeldige huisgenoot')
+    referredById = referrer.id
   }
 
   const last = await prisma.person.findFirst({
@@ -68,6 +108,7 @@ export async function submitPublicOrder(input: PublicOrderInput) {
       phone,
       sectionId: section.id,
       groupId,
+      referredById,
       sortOrder: (last?.sortOrder ?? -1) + 1,
       orders: {
         create: input.lines.map((line) => ({

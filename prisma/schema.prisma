@@ -50,6 +50,7 @@ model Group {
 model Person {
   id            Int           @id @default(autoincrement())
   name          String
+  fullName      String?
   sortOrder     Int           @default(0)
   locked        Boolean       @default(false)
   sectionId     Int
@@ -60,6 +61,9 @@ model Person {
   user          User?
   phone         String?
   paymentStatus PaymentStatus @default(NOG_NIET_GESTUURD)
+  referredById  Int?
+  referredBy    Person?       @relation("PersonReferral", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals     Person[]      @relation("PersonReferral")
 }
 
 model Product {

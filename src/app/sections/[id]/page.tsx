@@ -32,6 +32,8 @@ export default async function SectionPage({ params }: Props) {
               orderBy: { createdAt: 'asc' },
               include: { product: true },
             },
+            referredBy: { select: { name: true } },
+            group: { select: { name: true } },
           },
         },
         groups: {
@@ -48,6 +50,8 @@ export default async function SectionPage({ params }: Props) {
   const personsPlain = section.persons
     .map((p) => ({
       ...p,
+      referrerName: p.referredBy?.name ?? null,
+      clubName: p.group?.name ?? null,
       orders: p.orders.map((o) => ({
         ...o,
         product: {
@@ -56,8 +60,13 @@ export default async function SectionPage({ params }: Props) {
         },
       })),
     }))
-    // Wie nog een Tikkie moet krijgen/versturen staat bovenaan
-    .sort((a, b) => Number(a.paymentStatus === 'BETAALD') - Number(b.paymentStatus === 'BETAALD'))
+    .sort((a, b) => {
+      // Wie nog een Tikkie moet krijgen/versturen staat bovenaan
+      const paid = Number(a.paymentStatus === 'BETAALD') - Number(b.paymentStatus === 'BETAALD')
+      if (paid !== 0) return paid
+      // Daarna gegroepeerd/gesorteerd op doorverwijzende huisgenoot, voor overzicht
+      return (a.referrerName ?? '').localeCompare(b.referrerName ?? '')
+    })
 
   const productsPlain = products.map((p) => ({
     ...p,
