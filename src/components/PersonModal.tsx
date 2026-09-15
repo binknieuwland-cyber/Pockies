@@ -10,12 +10,13 @@ interface Props {
   sectionId: number
   groups?: { id: number; name: string }[]
   /** Pass person to edit, omit to add */
-  person?: { id: number; name: string; groupId?: number | null }
+  person?: { id: number; name: string; groupId?: number | null; phone?: string | null }
   onClose: () => void
 }
 
 export default function PersonModal({ sectionId, groups = [], person, onClose }: Props) {
   const [name, setName] = useState(person?.name ?? '')
+  const [phone, setPhone] = useState(person?.phone ?? '')
   const [groupId, setGroupId] = useState<string>(
     person?.groupId != null ? String(person.groupId) : '',
   )
@@ -29,12 +30,12 @@ export default function PersonModal({ sectionId, groups = [], person, onClose }:
     startTransition(async () => {
       try {
         if (person) {
-          await updatePerson(person.id, name)
+          await updatePerson(person.id, name, phone)
           if (groups.length > 0) {
             await setPersonGroup(person.id, groupId ? Number(groupId) : null)
           }
         } else {
-          await addPerson(sectionId, name, groupId ? Number(groupId) : null)
+          await addPerson(sectionId, name, groupId ? Number(groupId) : null, phone)
         }
         router.refresh()
         onClose()
@@ -59,6 +60,19 @@ export default function PersonModal({ sectionId, groups = [], person, onClose }:
             placeholder="Naam van de persoon"
             required
             autoFocus
+            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label htmlFor="person-phone" className="block text-sm font-medium text-ink-700 mb-1">
+            Telefoonnummer (optioneel)
+          </label>
+          <input
+            id="person-phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="06 12345678"
             className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
           />
         </div>

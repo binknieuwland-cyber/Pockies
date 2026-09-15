@@ -69,6 +69,7 @@ export default function SectionView({
     id: number
     name: string
     groupId: number | null
+    phone: string | null
   } | null>(null)
   const [addOrderFor, setAddOrderFor] = useState<{ id: number; name: string } | null>(null)
   const [editOrder, setEditOrder] = useState<{
@@ -103,9 +104,10 @@ export default function SectionView({
     0,
   )
 
-  // Wat nog niet betaald is (alleen relevant voor personen met een telefoonnummer,
-  // d.w.z. binnengekomen via het publieke bestelformulier)
-  const outstandingPersons = persons.filter((p) => p.phone && p.paymentStatus !== 'BETAALD')
+  // Wat nog niet betaald is (alleen relevant voor personen die ook echt iets besteld hebben)
+  const outstandingPersons = persons.filter(
+    (p) => p.orders.length > 0 && p.paymentStatus !== 'BETAALD',
+  )
   const outstandingTotal = outstandingPersons.reduce(
     (s, p) => s + p.orders.reduce((ps, o) => ps + inclBtw(o.product.priceExclBtw) * o.quantity, 0),
     0,
@@ -164,7 +166,14 @@ export default function SectionView({
               <IconPlus className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setEditPerson({ id: person.id, name: person.name, groupId: person.groupId })}
+              onClick={() =>
+                setEditPerson({
+                  id: person.id,
+                  name: person.name,
+                  groupId: person.groupId,
+                  phone: person.phone,
+                })
+              }
               className="p-2 rounded-sm text-ink-300 hover:text-ink-700 hover:bg-ink-50 transition-colors"
               aria-label="Persoon bewerken"
               title="Bewerken"
@@ -193,23 +202,25 @@ export default function SectionView({
           </div>
         )}
 
-        {/* Tikkie-status — alleen bij personen met een telefoonnummer (publieke bestellingen) */}
-        {person.phone && (
-          <div className="flex items-center justify-between gap-2 px-4 pb-3 -mt-1">
+        {/* Tikkie-status — voor iedereen beheerbaar, ongeacht of er een telefoonnummer bekend is */}
+        <div className="flex items-center justify-between gap-2 px-4 pb-3 -mt-1">
+          {person.phone ? (
             <span className="font-mono text-xs text-ink-400 truncate">{person.phone}</span>
-            {canManagePayments ? (
-              <PaymentStatusButtons personId={person.id} status={person.paymentStatus} />
-            ) : (
-              <span className="font-mono text-[10px] uppercase tracking-wide text-ink-400">
-                {person.paymentStatus === 'BETAALD'
-                  ? 'Betaald'
-                  : person.paymentStatus === 'TIKKIE_GESTUURD'
-                    ? 'Tikkie gestuurd'
-                    : 'Nog niet gestuurd'}
-              </span>
-            )}
-          </div>
-        )}
+          ) : (
+            <span />
+          )}
+          {canManagePayments ? (
+            <PaymentStatusButtons personId={person.id} status={person.paymentStatus} />
+          ) : (
+            <span className="font-mono text-[10px] uppercase tracking-wide text-ink-400">
+              {person.paymentStatus === 'BETAALD'
+                ? 'Betaald'
+                : person.paymentStatus === 'TIKKIE_GESTUURD'
+                  ? 'Tikkie gestuurd'
+                  : 'Nog niet gestuurd'}
+            </span>
+          )}
+        </div>
 
         {/* Accordion body — only visible when expanded */}
         {isOpen && (

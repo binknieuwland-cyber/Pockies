@@ -7,7 +7,12 @@ import type { PaymentStatus } from '@prisma/client'
 
 // ─── Person ────────────────────────────────────────────────────────────────
 
-export async function addPerson(sectionId: number, name: string, groupId: number | null = null) {
+export async function addPerson(
+  sectionId: number,
+  name: string,
+  groupId: number | null = null,
+  phone: string | null = null,
+) {
   const session = await requireSession()
   assertSectionAccess(sectionId, session)
   if (!name.trim()) throw new Error('Naam is verplicht')
@@ -16,20 +21,26 @@ export async function addPerson(sectionId: number, name: string, groupId: number
     orderBy: { sortOrder: 'desc' },
   })
   await prisma.person.create({
-    data: { name: name.trim(), sectionId, groupId, sortOrder: (last?.sortOrder ?? -1) + 1 },
+    data: {
+      name: name.trim(),
+      sectionId,
+      groupId,
+      phone: phone?.trim() || null,
+      sortOrder: (last?.sortOrder ?? -1) + 1,
+    },
   })
   revalidatePath('/')
   revalidatePath(`/sections/${sectionId}`)
 }
 
-export async function updatePerson(id: number, name: string) {
+export async function updatePerson(id: number, name: string, phone: string | null = null) {
   const session = await requireSession()
   const existing = await prisma.person.findUniqueOrThrow({ where: { id } })
   assertSectionAccess(existing.sectionId, session)
   if (!name.trim()) throw new Error('Naam is verplicht')
   const person = await prisma.person.update({
     where: { id },
-    data: { name: name.trim() },
+    data: { name: name.trim(), phone: phone?.trim() || null },
   })
   revalidatePath('/')
   revalidatePath(`/sections/${person.sectionId}`)
