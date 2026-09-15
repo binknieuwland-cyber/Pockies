@@ -93,7 +93,7 @@ export default function LandingPage({ stofMeters, stofDoel }: { stofMeters: numb
             href="/login"
             icon={<IconUsers className="w-6 h-6" />}
             title="Huisgenoten login"
-            subtitle="Ook voor Comm Pockies"
+            subtitle="Log in met je e-mailadres"
           />
           <ActionBlock
             href="/mijn-bestelling"
@@ -108,6 +108,15 @@ export default function LandingPage({ stofMeters, stofDoel }: { stofMeters: numb
             subtitle="Nieuw hier? Begin je bestelling"
           />
         </div>
+
+        <p className="text-center pt-2">
+          <Link
+            href="/login?admin=1"
+            className="font-mono text-[10px] uppercase tracking-wider text-ink-300 hover:text-ink-500 hover:underline"
+          >
+            Beheerder inloggen
+          </Link>
+        </p>
       </div>
     </div>
   )

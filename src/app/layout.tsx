@@ -75,7 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
               </div>
             </div>
-            <NavTabs sections={sections} role={session.role} huisgenotenSectionId={session.huisgenotenSectionId} />
+            <NavTabs sections={sections} role={session.role} />
           </header>
         )}
         <main className="max-w-app mx-auto px-4 lg:px-8 py-5 lg:py-8">{children}</main>

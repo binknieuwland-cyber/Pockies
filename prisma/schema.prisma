@@ -24,7 +24,7 @@ enum PaymentStatus {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  codeHash  String
+  codeHash  String?
   role      Role
   personId  Int?     @unique
   person    Person?  @relation(fields: [personId], references: [id])

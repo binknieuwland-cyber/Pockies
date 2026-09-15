@@ -11,20 +11,19 @@ interface Section {
 interface Props {
   sections: Section[]
   role: 'COMM_POCKIES' | 'HUISGENOOT'
-  huisgenotenSectionId: number
 }
 
-export default function NavTabs({ sections, role, huisgenotenSectionId }: Props) {
+export default function NavTabs({ sections, role }: Props) {
   const pathname = usePathname()
 
-  const visibleSections =
-    role === 'COMM_POCKIES' ? sections : sections.filter((s) => s.id === huisgenotenSectionId)
-
-  const tabs = [
-    ...(role === 'COMM_POCKIES' ? [{ href: '/', label: 'Overzicht' }] : []),
-    ...visibleSections.map((s) => ({ href: `/sections/${s.id}`, label: s.name })),
-    ...(role === 'COMM_POCKIES' ? [{ href: '/admin/accounts', label: 'Accounts' }] : []),
-  ]
+  const tabs =
+    role === 'COMM_POCKIES'
+      ? [
+          { href: '/', label: 'Overzicht' },
+          ...sections.map((s) => ({ href: `/sections/${s.id}`, label: s.name })),
+          { href: '/admin/accounts', label: 'Accounts' },
+        ]
+      : [{ href: '/mijn-overzicht', label: 'Mijn overzicht' }]
 
   return (
     <nav className="max-w-app mx-auto overflow-x-auto scrollbar-hide -mb-px">

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export default async function AccountsPage() {
   const session = await getSession()
   if (!session) redirect('/login')
-  if (session.role !== 'COMM_POCKIES') redirect(`/sections/${session.huisgenotenSectionId}`)
+  if (session.role !== 'COMM_POCKIES') redirect('/mijn-overzicht')
 
   const huisgenotenSection = await prisma.section.findFirst({
     where: { name: 'Huisgenoten' },
@@ -23,7 +23,7 @@ export default async function AccountsPage() {
   const persons = (huisgenotenSection?.persons ?? []).map((p) => ({
     id: p.id,
     name: p.name,
-    user: p.user ? { id: p.user.id, email: p.user.email } : null,
+    user: p.user ? { id: p.user.id, email: p.user.email, role: p.user.role } : null,
   }))
 
   return (
@@ -33,7 +33,8 @@ export default async function AccountsPage() {
           Huisgenoten-accounts
         </h2>
         <p className="font-mono text-sm text-ink-500 mt-0.5">
-          Beheer inlogcodes voor de {persons.length} huisgenoten
+          Beheer inlog-e-mailadressen voor de {persons.length} huisgenoten — inloggen gaat met
+          alleen hun e-mail, geen code nodig
         </p>
       </div>
       <AccountsPanel persons={persons} />

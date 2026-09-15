@@ -1,14 +1,16 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState, useTransition } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import { login } from './actions'
+import { login, loginHuisgenoot } from './actions'
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams()
+  const [adminMode, setAdminMode] = useState(searchParams.get('admin') === '1')
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
@@ -20,7 +22,11 @@ export default function LoginPage() {
     setError('')
     startTransition(async () => {
       try {
-        await login(email, code)
+        if (adminMode) {
+          await login(email, code)
+        } else {
+          await loginHuisgenoot(email)
+        }
         router.refresh()
       } catch (err: unknown) {
         // NEXT_REDIRECT wordt door Next.js zelf afgehandeld en komt hier niet als echte fout aan
@@ -47,8 +53,13 @@ export default function LoginPage() {
             VS42 · Sinds 1962
           </p>
           <h1 className="mt-1 font-serif text-xl font-semibold text-ink-900">
-            De Voorstraat Shop
+            {adminMode ? 'Beheerder inloggen' : 'Huisgenoten login'}
           </h1>
+          {!adminMode && (
+            <p className="mt-1 text-sm text-ink-400">
+              Log in met je e-mailadres — geen code nodig
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,21 +79,23 @@ export default function LoginPage() {
               className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
             />
           </div>
-          <div>
-            <label htmlFor="code" className="block text-sm font-medium text-ink-700 mb-1">
-              Code
-            </label>
-            <input
-              id="code"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Jouw persoonlijke code"
-              required
-              autoComplete="current-password"
-              className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
-            />
-          </div>
+          {adminMode && (
+            <div>
+              <label htmlFor="code" className="block text-sm font-medium text-ink-700 mb-1">
+                Code
+              </label>
+              <input
+                id="code"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Jouw persoonlijke code"
+                required
+                autoComplete="current-password"
+                className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
+              />
+            </div>
+          )}
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <Button type="submit" variant="primary" disabled={isPending} className="w-full">
             {isPending ? 'Inloggen...' : 'Inloggen'}
@@ -98,7 +111,28 @@ export default function LoginPage() {
             Terug
           </Link>
         </p>
+
+        <p className="text-center mt-2">
+          <button
+            type="button"
+            onClick={() => {
+              setError('')
+              setAdminMode((v) => !v)
+            }}
+            className="font-mono text-[10px] text-ink-300 hover:text-ink-500 hover:underline"
+          >
+            {adminMode ? 'Ik ben een huisgenoot' : 'Beheerder inloggen'}
+          </button>
+        </p>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }

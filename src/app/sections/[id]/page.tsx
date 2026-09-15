@@ -18,7 +18,7 @@ export default async function SectionPage({ params }: Props) {
   try {
     assertSectionAccess(sectionId, session)
   } catch {
-    redirect(`/sections/${session.huisgenotenSectionId}`)
+    redirect('/mijn-overzicht')
   }
 
   const [section, products] = await Promise.all([

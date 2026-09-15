@@ -42,7 +42,7 @@ export default async function OverviewPage() {
     const orders = await prisma.order.findMany({ include: { product: true } })
     return <LandingPage stofMeters={computeTotalStof(orders)} stofDoel={STOF_DOEL} />
   }
-  if (session.role !== 'COMM_POCKIES') redirect(`/sections/${session.huisgenotenSectionId}`)
+  if (session.role !== 'COMM_POCKIES') redirect('/mijn-overzicht')
 
   const [orders, products, sections] = await Promise.all([
     prisma.order.findMany({

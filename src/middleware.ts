@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
 
   if (pathname === '/login' && session) {
     const url = request.nextUrl.clone()
-    url.pathname = session.role === 'COMM_POCKIES' ? '/' : `/sections/${session.huisgenotenSectionId}`
+    url.pathname = session.role === 'COMM_POCKIES' ? '/' : '/mijn-overzicht'
     return NextResponse.redirect(url)
   }
 
@@ -23,15 +23,13 @@ export async function middleware(request: NextRequest) {
   }
 
   if (session.role === 'HUISGENOOT') {
-    const ownSectionPath = `/sections/${session.huisgenotenSectionId}`
-    const onOwnSection = pathname === ownSectionPath
     const onOverview = pathname === '/'
-    const onOtherSection = pathname.startsWith('/sections/') && !onOwnSection
+    const onSections = pathname.startsWith('/sections/')
     const onAdmin = pathname.startsWith('/admin')
 
-    if (onOverview || onOtherSection || onAdmin) {
+    if (onOverview || onSections || onAdmin) {
       const url = request.nextUrl.clone()
-      url.pathname = ownSectionPath
+      url.pathname = '/mijn-overzicht'
       return NextResponse.redirect(url)
     }
   }
