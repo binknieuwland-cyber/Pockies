@@ -9,12 +9,32 @@ function ActionBlock({
   icon,
   title,
   subtitle,
+  variant = 'secondary',
 }: {
   href: string
   icon: React.ReactNode
   title: string
   subtitle: string
+  variant?: 'primary' | 'secondary'
 }) {
+  if (variant === 'primary') {
+    return (
+      <Link
+        href={href}
+        className="group flex items-center gap-4 bg-ink-900 border border-ink-900 rounded-md px-5 py-7 hover:bg-ink-800 hover:shadow-md transition-all"
+      >
+        <span className="grid place-items-center w-14 h-14 rounded-sm bg-gold-600 text-ink-900 shrink-0">
+          {icon}
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block font-serif text-xl font-semibold text-white">{title}</span>
+          <span className="block text-sm text-ink-200 mt-0.5">{subtitle}</span>
+        </span>
+        <IconArrowRight className="w-6 h-6 text-gold-400 group-hover:translate-x-0.5 transition shrink-0" />
+      </Link>
+    )
+  }
+
   return (
     <Link
       href={href}
@@ -90,6 +110,13 @@ export default function LandingPage({ stofMeters, stofDoel }: { stofMeters: numb
         {/* ── ACTIES ──────────────────────────────────────────────────── */}
         <div className="space-y-3">
           <ActionBlock
+            href="/bestellen"
+            icon={<IconBox className="w-7 h-7" />}
+            title="Bestelling plaatsen"
+            subtitle="Begin hier je bestelling"
+            variant="primary"
+          />
+          <ActionBlock
             href="/login"
             icon={<IconUsers className="w-6 h-6" />}
             title="Huisgenoten login"
@@ -100,12 +127,6 @@ export default function LandingPage({ stofMeters, stofDoel }: { stofMeters: numb
             icon={<IconEdit className="w-6 h-6" />}
             title="Al besteld? Login"
             subtitle="Bekijk of wijzig je bestelling"
-          />
-          <ActionBlock
-            href="/bestellen"
-            icon={<IconBox className="w-6 h-6" />}
-            title="Bestelling plaatsen"
-            subtitle="Nieuw hier? Begin je bestelling"
           />
         </div>
 

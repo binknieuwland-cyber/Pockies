@@ -37,10 +37,15 @@ export async function login(email: string, code: string) {
   redirect(user.role === 'COMM_POCKIES' ? '/' : '/mijn-overzicht')
 }
 
-export async function loginHuisgenoot(email: string) {
+export async function loginHuisgenoot(email: string, accessCode: string) {
   const cleanEmail = email.trim().toLowerCase()
-  if (!cleanEmail) {
-    throw new Error('Vul je e-mailadres in')
+  const cleanAccessCode = accessCode.trim().toLowerCase()
+  if (!cleanEmail || !cleanAccessCode) {
+    throw new Error('Vul je e-mailadres en de huiscode in')
+  }
+
+  if (cleanAccessCode !== process.env.HUISGENOOT_ACCESS_CODE) {
+    throw new Error('Onjuiste huiscode')
   }
 
   const user = await prisma.user.findUnique({ where: { email: cleanEmail } })

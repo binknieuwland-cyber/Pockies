@@ -13,6 +13,7 @@ function LoginForm() {
   const [adminMode, setAdminMode] = useState(searchParams.get('admin') === '1')
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
+  const [accessCode, setAccessCode] = useState('')
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
@@ -25,7 +26,7 @@ function LoginForm() {
         if (adminMode) {
           await login(email, code)
         } else {
-          await loginHuisgenoot(email)
+          await loginHuisgenoot(email, accessCode)
         }
         router.refresh()
       } catch (err: unknown) {
@@ -57,7 +58,7 @@ function LoginForm() {
           </h1>
           {!adminMode && (
             <p className="mt-1 text-sm text-ink-400">
-              Log in met je e-mailadres — geen code nodig
+              Log in met je e-mailadres en de huiscode
             </p>
           )}
         </div>
@@ -79,7 +80,7 @@ function LoginForm() {
               className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
             />
           </div>
-          {adminMode && (
+          {adminMode ? (
             <div>
               <label htmlFor="code" className="block text-sm font-medium text-ink-700 mb-1">
                 Code
@@ -93,6 +94,22 @@ function LoginForm() {
                 required
                 autoComplete="current-password"
                 className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
+              />
+            </div>
+          ) : (
+            <div>
+              <label htmlFor="accessCode" className="block text-sm font-medium text-ink-700 mb-1">
+                Huiscode
+              </label>
+              <input
+                id="accessCode"
+                type="text"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                placeholder="Huiscode"
+                required
+                autoComplete="off"
+                className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
               />
             </div>
           )}
