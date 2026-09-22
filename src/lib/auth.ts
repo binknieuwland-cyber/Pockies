@@ -25,8 +25,11 @@ export async function createSessionCookie(payload: SessionPayload) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: SESSION_MAX_AGE,
     path: '/',
+    // Comm Pockies ziet gevoelig beheeroverzicht: geen persistente cookie,
+    // dus uitgelogd zodra de browser dichtgaat. Huisgenoten blijven wel
+    // ingelogd (bewuste keuze voor lage drempel).
+    ...(payload.role === 'COMM_POCKIES' ? {} : { maxAge: SESSION_MAX_AGE }),
   })
 }
 
