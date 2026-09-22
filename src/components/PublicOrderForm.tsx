@@ -7,6 +7,8 @@ import Link from 'next/link'
 import Card from './ui/Card'
 import Button from './ui/Button'
 import OrderLinesEditor, { newOrderLine, linesTotal, type OrderLine, type Product } from './OrderLinesEditor'
+import PhoneInput from './PhoneInput'
+import { formatPhoneDisplay } from '@/lib/phone'
 import { formatEuro } from '@/lib/utils'
 import { submitPublicOrder, type PublicCategory } from '@/app/bestellen/actions'
 
@@ -217,7 +219,8 @@ export default function PublicOrderForm({
         <Card className="p-6 sm:p-8 text-center">
           <h2 className="font-serif text-xl font-semibold text-ink-900">Bedankt voor je bestelling!</h2>
           <p className="mt-3 text-sm text-ink-600">
-            We nemen via Tikkie contact op op <span className="font-medium">{done.phone}</span> om
+            We nemen via Tikkie contact op op{' '}
+            <span className="font-medium">{formatPhoneDisplay(done.phone)}</span> om
             te betalen.
           </p>
         </Card>
@@ -410,20 +413,17 @@ export default function PublicOrderForm({
             />
           </div>
 
-          <div>
-            <label htmlFor="pub-phone" className="block text-sm font-medium text-ink-700 mb-1">
-              Telefoonnummer <span className="text-ink-400">(voor de Tikkie)</span>
-            </label>
-            <input
-              id="pub-phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="06 12345678"
-              required
-              className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
-            />
-          </div>
+          <PhoneInput
+            id="pub-phone"
+            label={
+              <>
+                Telefoonnummer <span className="text-ink-400">(voor de Tikkie)</span>
+              </>
+            }
+            value={phone}
+            onChange={setPhone}
+            required
+          />
         </Card>
 
         <OrderLinesEditor products={products} lines={lines} onChange={setLines} />

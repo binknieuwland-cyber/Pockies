@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Modal from './Modal'
 import Button from './ui/Button'
+import PhoneInput from './PhoneInput'
 import { addPerson, updatePerson, setPersonGroup } from '@/app/actions'
 
 interface Props {
@@ -63,19 +64,12 @@ export default function PersonModal({ sectionId, groups = [], person, onClose }:
             className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
           />
         </div>
-        <div>
-          <label htmlFor="person-phone" className="block text-sm font-medium text-ink-700 mb-1">
-            Telefoonnummer (optioneel)
-          </label>
-          <input
-            id="person-phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="06 12345678"
-            className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
-          />
-        </div>
+        <PhoneInput
+          id="person-phone"
+          label="Telefoonnummer (optioneel)"
+          value={phone}
+          onChange={setPhone}
+        />
         {groups.length > 0 && (
           <div>
             <label htmlFor="person-group" className="block text-sm font-medium text-ink-700 mb-1">

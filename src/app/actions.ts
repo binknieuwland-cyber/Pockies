@@ -3,9 +3,17 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { requireSession, assertSectionAccess, requireCommPockies } from '@/lib/auth'
+import { normalizePhoneDigits, isValidDutchMobile } from '@/lib/phone'
 import type { PaymentStatus } from '@prisma/client'
 
 // ─── Person ────────────────────────────────────────────────────────────────
+
+function cleanOptionalPhone(phone: string | null): string | null {
+  if (!phone || !phone.trim()) return null
+  const digits = normalizePhoneDigits(phone)
+  if (!isValidDutchMobile(digits)) throw new Error('Vul een geldig 06-nummer in (8 cijfers)')
+  return digits
+}
 
 export async function addPerson(
   sectionId: number,
@@ -25,7 +33,7 @@ export async function addPerson(
       name: name.trim(),
       sectionId,
       groupId,
-      phone: phone?.trim() || null,
+      phone: cleanOptionalPhone(phone),
       sortOrder: (last?.sortOrder ?? -1) + 1,
     },
   })
@@ -40,7 +48,7 @@ export async function updatePerson(id: number, name: string, phone: string | nul
   if (!name.trim()) throw new Error('Naam is verplicht')
   const person = await prisma.person.update({
     where: { id },
-    data: { name: name.trim(), phone: phone?.trim() || null },
+    data: { name: name.trim(), phone: cleanOptionalPhone(phone) },
   })
   revalidatePath('/')
   revalidatePath(`/sections/${person.sectionId}`)

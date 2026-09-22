@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { normalizePhoneDigits } from '@/lib/phone'
 
 export interface MyOrderLine {
   productId: number
@@ -11,7 +12,7 @@ export interface MyOrderLine {
 }
 
 export async function lookupOrdersByPhone(phone: string) {
-  const cleanPhone = phone.trim()
+  const cleanPhone = normalizePhoneDigits(phone)
   if (!cleanPhone) throw new Error('Vul een telefoonnummer in')
 
   const persons = await prisma.person.findMany({
@@ -43,7 +44,7 @@ export async function lookupOrdersByPhone(phone: string) {
 }
 
 export async function updateMyOrder(personId: number, phone: string, lines: MyOrderLine[]) {
-  const cleanPhone = phone.trim()
+  const cleanPhone = normalizePhoneDigits(phone)
   if (!cleanPhone) throw new Error('Vul een telefoonnummer in')
   if (lines.length === 0) throw new Error('Voeg minimaal één product toe')
   for (const line of lines) {

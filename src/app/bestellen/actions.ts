@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { normalizePhoneDigits, isValidDutchMobile } from '@/lib/phone'
 
 export type PublicCategory = 'OUD_HUISGENOOT' | 'CLUB' | 'HUIS' | 'VIA_HUISGENOOT'
 
@@ -34,10 +35,11 @@ const SECTION_NAMES: Record<PublicCategory, string> = {
 
 export async function submitPublicOrder(input: PublicOrderInput) {
   const name = input.name.trim()
-  const phone = input.phone.trim()
+  const phone = normalizePhoneDigits(input.phone)
 
   if (!name) throw new Error('Naam is verplicht')
   if (!phone) throw new Error('Telefoonnummer is verplicht')
+  if (!isValidDutchMobile(phone)) throw new Error('Vul een geldig 06-nummer in (8 cijfers)')
   if (!SECTION_NAMES[input.category]) {
     throw new Error('Kies een geldige categorie')
   }

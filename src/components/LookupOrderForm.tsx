@@ -6,6 +6,8 @@ import Link from 'next/link'
 import Card from './ui/Card'
 import Button from './ui/Button'
 import OrderLinesEditor, { newOrderLine, linesTotal, type OrderLine, type Product } from './OrderLinesEditor'
+import PhoneInput from './PhoneInput'
+import { formatPhoneDisplay } from '@/lib/phone'
 import { inclBtw, formatEuro } from '@/lib/utils'
 import { lookupOrdersByPhone, updateMyOrder } from '@/app/mijn-bestelling/actions'
 
@@ -140,21 +142,13 @@ export default function LookupOrderForm({ products }: { products: Product[] }) {
 
         <form onSubmit={handleSearch} className="space-y-4 mb-6">
           <Card className="p-5 space-y-4">
-            <div>
-              <label htmlFor="lookup-phone" className="block text-sm font-medium text-ink-700 mb-1">
-                Telefoonnummer waarmee je besteld hebt
-              </label>
-              <input
-                id="lookup-phone"
-                type="tel"
-                value={phoneInput}
-                onChange={(e) => setPhoneInput(e.target.value)}
-                placeholder="06 12345678"
-                required
-                autoFocus
-                className="w-full rounded-sm border border-ink-200 px-4 py-3 text-ink-900 focus:outline-none focus:ring-2 focus:ring-ink-500 focus:border-transparent"
-              />
-            </div>
+            <PhoneInput
+              id="lookup-phone"
+              label="Telefoonnummer waarmee je besteld hebt"
+              value={phoneInput}
+              onChange={setPhoneInput}
+              required
+            />
             {error && <p className="text-red-600 text-sm">{error}</p>}
             <Button type="submit" variant="primary" disabled={isPending} className="w-full">
               {isPending ? 'Zoeken...' : 'Zoeken'}
@@ -165,7 +159,7 @@ export default function LookupOrderForm({ products }: { products: Product[] }) {
         {results && results.length === 0 && (
           <Card className="p-5 text-center space-y-2">
             <p className="text-sm text-ink-600">
-              Geen bestelling gevonden bij {searchedPhone}.
+              Geen bestelling gevonden bij {searchedPhone && formatPhoneDisplay(searchedPhone)}.
             </p>
             <Link href="/bestellen" className="text-sm text-ink-700 font-medium hover:underline">
               Nog geen bestelling? Plaats er hier een →
